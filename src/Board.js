@@ -1,8 +1,9 @@
 import React from 'react'
 
 export function TicTacToeBoard({ ctx, G, moves }) {
-  const onClick = (id) => moves.clickCell(id);
-
+  const onClick = (id) => {
+      moves.clickCell(id)
+  }
   let winner = ''
   if (ctx.gameover) {
     winner =
@@ -25,19 +26,24 @@ export function TicTacToeBoard({ ctx, G, moves }) {
   for (let i = 0; i < 3; i++) {
     let cells = []
     for (let j = 0; j < 3; j++) {
-      const id = 3 * i + j;
+    // id is the id of the cell being clicked
+      const id = 3 * i + j
+      // G.cells tracks which cells were clicked by which player
       cells.push(
         <td key={id}>
           {G.cells[id] ? (
-            <div style={cellStyle}>{G.cells[id]}</div>
+            <div style={cellStyle}>
+                {G.cells[id] === '1' ? 'X' : 'O'}
+            </div>
           ) : (
             <button style={cellStyle} onClick={() => onClick(id)} />
           )}
         </td>
       )
     }
-    tbody.push(<tr key={i}>{cells}</tr>);
+    tbody.push(<tr key={i}>{cells}</tr>)
   }
+
 
   return (
     <div>
