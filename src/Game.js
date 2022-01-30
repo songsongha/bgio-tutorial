@@ -36,6 +36,12 @@ export const TicTacToe = {
         G.cells[id] = ctx.currentPlayer
       },
     },
+
+      /* 
+      endIf takes a function that determines if the game is over. If it returns anything at all, 
+      the game ends and the return value is available at ctx.gameover.
+      */
+
     endIf: (G, ctx) => {
         if (IsVictory(G.cells)) {
           return { winner: ctx.currentPlayer }
@@ -43,12 +49,20 @@ export const TicTacToe = {
         if (IsDraw(G.cells)) {
           return { draw: true }
         }
-      }
-
-      /* 
-      endIf takes a function that determines if the game is over. If it returns anything at all, 
-      the game ends and the return value is available at ctx.gameover.
-      */
+      },
+    // bot function
+    ai: {
+        // enumerate function should return an array of possible moves
+        enumerate: (G, ctx) => {
+        let moves = [];
+        for (let i = 0; i < 9; i++) {
+            if (G.cells[i] === null) {
+            moves.push({ move: 'clickCell', args: [i] });
+            }
+        }
+        return moves;
+        },
+    },
   }
 
   /* 

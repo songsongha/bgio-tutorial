@@ -4,11 +4,17 @@ export function TicTacToeBoard({ ctx, G, moves }) {
   const onClick = (id) => {
       moves.clickCell(id)
   }
+  const displayXO = (player) => {
+    if (player === '1'){
+        return 'X' 
+     }
+     return 'O'
+  }
   let winner = ''
   if (ctx.gameover) {
     winner =
       ctx.gameover.winner !== undefined ? (
-        <div id="winner">Winner: {ctx.gameover.winner}</div>
+        <div id="winner">Winner: {displayXO(ctx.gameover.winner)}</div>
       ) : (
         <div id="winner">Draw!</div>
       )
@@ -33,7 +39,7 @@ export function TicTacToeBoard({ ctx, G, moves }) {
         <td key={id}>
           {G.cells[id] ? (
             <div style={cellStyle}>
-                {G.cells[id] === '1' ? 'X' : 'O'}
+                {displayXO(G.cells[id])}
             </div>
           ) : (
             <button style={cellStyle} onClick={() => onClick(id)} />
