@@ -1,62 +1,80 @@
-import React from 'react'
+/*
+ * Copyright 2017 The boardgame.io Authors.
+ *
+ * Use of this source code is governed by a MIT-style
+ * license that can be found in the LICENSE file or at
+ * https://opensource.org/licenses/MIT.
+ */
 
-export function TicTacToeBoard({ ctx, G, moves }) {
-  const onClick = (id) => {
-      moves.clickCell(id)
-  }
-  const displayXO = (player) => {
-    if (player === '1'){
-        return 'X' 
-     }
-     return 'O'
-  }
-  let winner = ''
-  if (ctx.gameover) {
-    winner =
-      ctx.gameover.winner !== undefined ? (
-        <div id="winner">Winner: {displayXO(ctx.gameover.winner)}</div>
-      ) : (
-        <div id="winner">Draw!</div>
-      )
-  }
+import React from 'react';
+import PropTypes from 'prop-types';
+import './board.css';
 
-  const cellStyle = {
-    border: '1px solid #555',
-    width: '50px',
-    height: '50px',
-    lineHeight: '50px',
-    textAlign: 'center',
-  }
+export class TicTacToeBoard extends React.Component {
+  static propTypes = {
+    G: PropTypes.any.isRequired,
+    ctx: PropTypes.any.isRequired,
+    moves: PropTypes.any.isRequired,
+    playerID: PropTypes.string,
+    isActive: PropTypes.bool,
+    isMultiplayer: PropTypes.bool,
+  };
 
-  let tbody = []
-  for (let i = 0; i < 3; i++) {
-    let cells = []
-    for (let j = 0; j < 3; j++) {
-    // id is the id of the cell being clicked
-      const id = 3 * i + j
-      // G.cells tracks which cells were clicked by which player
-      cells.push(
-        <td key={id}>
-          {G.cells[id] ? (
-            <div style={cellStyle}>
-                {displayXO(G.cells[id])}
-            </div>
-          ) : (
-            <button style={cellStyle} onClick={() => onClick(id)} />
-          )}
-        </td>
-      )
+  onClick = id => {
+    if (this.isActive(id)) {
+      this.props.moves.clickCell(id);
     }
-    tbody.push(<tr key={i}>{cells}</tr>)
+  };
+
+  isActive(id) {
+    if (!this.props.isActive) return false;
+    if (this.props.G.cells[id] !== null) return false;
+    return true;
   }
 
+  render() {
+    const displayXO = (player) => {
+      if (player === '1'){
+          return 'X' 
+       }
+       return 'O'
+    }
 
-  return (
-    <div>
-      <table id="board">
-        <tbody>{tbody}</tbody>
-      </table>
-      {winner}
-    </div>
-  );
+    let tbody = [];
+    for (let i = 0; i < 3; i++) {
+      let cells = [];
+      for (let j = 0; j < 3; j++) {
+        const id = 3 * i + j;
+        cells.push(
+          <td
+            key={id}
+            className={this.isActive(id) ? 'active' : ''}
+            onClick={() => this.onClick(id)}
+          >
+            {displayXO(this.props.G.cells[id])}
+          </td>
+        );
+      }
+      tbody.push(<tr key={i}>{cells}</tr>);
+    }
+  
+    let winner = null;
+    if (this.props.ctx.gameover) {
+      winner =
+        this.props.ctx.gameover.winner !== undefined ? (
+          <div id="winner">Winner: {displayXO(this.props.ctx.gameover.winner)}</div>
+        ) : (
+            <div id="winner">Draw!</div>
+          );
+    }
+
+    return (
+      <div>
+        <table id="board">
+          <tbody>{tbody}</tbody>
+        </table>
+        {winner}
+      </div>
+    );
+  }
 }
